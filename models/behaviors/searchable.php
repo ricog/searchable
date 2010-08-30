@@ -22,6 +22,19 @@ class SearchableBehavior extends ModelBehavior {
 	protected $_baseConfig = array(
 		'searchType' => 'exact',
 		'searchFields' => array(),
+		'clean' => array(
+			'rules' => array(
+				'all others' => array(
+					'pattern' => '[^\w ]',
+					'replacement' => ' ',
+				),
+				'compress space' => array(
+					'pattern' => ' +',
+					'replacement' => ' ',
+				),
+			),
+			'trim' => true,
+		),
 	);
 
 /**
@@ -80,5 +93,21 @@ class SearchableBehavior extends ModelBehavior {
 		}
 
 		return array('OR' => $conditions);
+	}
+
+	function cleanSearchString(&$Model, $searchString = null) {
+		$clean = $this->settings[$Model->alias]['clean'];
+
+		if (!empty($clean['rules'])) {
+			foreach ($clean['rules'] as $ruleKey => $rule) {
+				$searchString = preg_replace('/' . $rule['pattern'] . '/', $rule['replacement'], $searchString);
+			} unset($ruleKey); unset($rule);
+		}
+
+		if (!empty($clean['trim'])) {
+			$searchString = trim($searchString);
+		}
+
+		return $searchString;
 	}
 }
