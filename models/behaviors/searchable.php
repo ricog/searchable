@@ -16,6 +16,7 @@ class SearchableBehavior extends ModelBehavior {
  * searchType - a string determining the type of search performed. Options are:
  *     partial   - will find the search string anywhere in the field
  * 	   phrase    - will match the string as a phrase
+ * 	   starts_with - matches from beginning of field (for autocomplete)
  * 	   exact     - will only match if the field contents exactly match the search string 
  */
 	protected $_baseConfig = array(
@@ -67,6 +68,11 @@ class SearchableBehavior extends ModelBehavior {
 				$conditions[] = array(
 					$fieldName . ' LIKE' => '%' . $search . '%',
 					$fieldName . ' REGEXP' => '[[:<:]]' . $search . '[[:>:]]',
+				);
+			} elseif ($searchType == 'starts_with') {
+				$conditions[] = array(
+					$fieldName . ' LIKE' => $search . '%',
+					$fieldName . ' REGEXP' => '^' . $search,
 				);
 			} else {
 				$conditions[$fieldName] = $search;
