@@ -17,6 +17,7 @@ class SearchableBehavior extends ModelBehavior {
  *     partial   - will find the search string anywhere in the field
  * 	   phrase    - will match the string as a phrase
  * 	   starts_with - matches from beginning of field (for autocomplete)
+ * 	   sounds_like - matches similar records (for misspelling suggestions)
  * 	   exact     - will only match if the field contents exactly match the search string 
  */
 	protected $_baseConfig = array(
@@ -87,7 +88,11 @@ class SearchableBehavior extends ModelBehavior {
 					$fieldName . ' LIKE' => $search . '%',
 					$fieldName . ' REGEXP' => '^' . $search,
 				);
-			} else {
+			} elseif ($searchType == 'sounds_like') {
+				$conditions[] = array(
+					"SOUNDEX(" . $fieldName . ") = SOUNDEX('" . $search . "')",
+				);
+		} else {
 				$conditions[$fieldName] = $search;
 			}
 		}
