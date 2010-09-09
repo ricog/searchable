@@ -52,8 +52,8 @@ class SearchableTestCase extends CakeTestCase {
 	var $fixtures = array('plugin.searchable.article', 'plugin.searchable.comment');
 	
 	function startTest() {
-		$this->Article = ClassRegistry::init('Article');
-		$this->ArticleHasMany = ClassRegistry::init('ArticleHasMany');
+		$this->Article =& ClassRegistry::init('Article');
+		$this->ArticleHasMany =& ClassRegistry::init('ArticleHasMany');
 	}
 	
 	function endTest() {
