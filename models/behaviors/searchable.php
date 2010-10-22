@@ -19,6 +19,7 @@ class SearchableBehavior extends ModelBehavior {
  * 	   starts_with - matches from beginning of field (for autocomplete)
  * 	   sounds_like - matches similar records (for misspelling suggestions)
  * 	   exact     - will only match if the field contents exactly match the search string 
+ *     phrase_starts_with - combination of phrase and starts_with
  */
 	protected $_baseConfig = array(
 		'searchType' => 'exact',
@@ -91,6 +92,11 @@ class SearchableBehavior extends ModelBehavior {
 			} elseif ($searchType == 'sounds_like') {
 				$conditions[] = array(
 					"SOUNDEX(" . $fieldName . ") = SOUNDEX('" . $search . "')",
+				);
+			} elseif ($searchType == 'phrase_starts_with') {
+				$conditions[] = array(
+					$fieldName . ' LIKE' => '%' . $search . '%',
+					$fieldName . ' REGEXP' => '[[:<:]]' . $search,
 				);
 		} else {
 				$conditions[$fieldName] = $search;
