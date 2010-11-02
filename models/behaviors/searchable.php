@@ -29,10 +29,12 @@ class SearchableBehavior extends ModelBehavior {
 				'all others' => array(
 					'pattern' => '[^\w ]',
 					'replacement' => ' ',
+					'order' => 100,
 				),
 				'compress space' => array(
 					'pattern' => ' +',
 					'replacement' => ' ',
+					'order' => 200,
 				),
 			),
 			'trim' => true,
@@ -108,6 +110,7 @@ class SearchableBehavior extends ModelBehavior {
 
 	function cleanSearchString(&$Model, $searchString = null) {
 		$clean = $this->settings[$Model->alias]['clean'];
+		$clean['rules'] = Set::sort($clean['rules'], '{[\w ]+}.order', 'asc');
 
 		if (!empty($clean['rules'])) {
 			foreach ($clean['rules'] as $ruleKey => $rule) {
